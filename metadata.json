@@ -1,0 +1,8 @@
+{
+  "name": "AeroWings - Premier Airline Booking & Live Operations Management",
+  "description": "Premier airline reservations portal featuring 294 global destinations (95 Indian Domestic \u0026 199 International), 100 filterable airlines, customizable baggage selection, real-time meteorological weather predictor with automatic adverse condition cancellation and full refund, multi-currency live conversions, and comprehensive real-time admin portal.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

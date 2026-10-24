@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@layer base {
+  html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Support tabular nums across all tables and financial numbers */
+  .font-mono, .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Specific Responsive Media Queries for 320px, 375px, 425px, 768px, 1024px, 1440px */
+@media screen and (max-width: 320px) {
+  .hero-title {
+    font-size: 1.5rem !important;
+    line-height: 1.25 !important;
+  }
+  .compact-padding {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+  input, select, button {
+    font-size: 12px !important;
+  }
+}
+
+@media screen and (min-width: 321px) and (max-width: 375px) {
+  .hero-title {
+    font-size: 1.75rem !important;
+    line-height: 1.25 !important;
+  }
+}
+
+@media screen and (min-width: 376px) and (max-width: 425px) {
+  .hero-title {
+    font-size: 2rem !important;
+    line-height: 1.25 !important;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  .tablet-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .desktop-container {
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media screen and (min-width: 1440px) {
+  .desktop-wide-container {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

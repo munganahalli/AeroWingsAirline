@@ -133,6 +133,11 @@ export function Step5PayAndVerifyOtp({
     e.preventDefault();
     setError(null);
 
+    if (!draft.flight) {
+      setError('No flight selected. Please return to Step 1 to select a flight.');
+      return;
+    }
+
     // 1. Validate payment details
     if (paymentMethod === 'card') {
       if (cardNumber.replace(/\s/g, '').length < 16) {

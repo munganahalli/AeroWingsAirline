@@ -51,7 +51,7 @@ export function Step1FlightSelection({
   const [weatherLoading, setWeatherLoading] = useState(false);
 
   useEffect(() => {
-    if (flights.length > 0) {
+    if (flights.length > 0 && flights[0]?.origin?.code && flights[0]?.destination?.code) {
       const orig = flights[0].origin.code;
       const dest = flights[0].destination.code;
       setWeatherLoading(true);

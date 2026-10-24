@@ -47,17 +47,39 @@ export function Step4BookingConfirmation({
     }
   }, [flight?.id]);
 
-  const depTime = new Date(flight.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  const arrTime = new Date(flight.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  const depDate = new Date(flight.departureTime).toLocaleDateString([], {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
+  if (!flight) {
+    return (
+      <div className="p-8 text-center bg-white rounded-2xl border border-slate-200 shadow-xs space-y-4">
+        <p className="text-sm font-semibold text-slate-700">No flight selected. Please return to Step 1 to choose a flight.</p>
+        <button
+          onClick={onBack}
+          className="px-5 py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-bold rounded-xl text-xs transition-colors"
+        >
+          Return to Flight Selection
+        </button>
+      </div>
+    );
+  }
+
+  const depDateObj = flight.departureTime ? new Date(flight.departureTime) : new Date();
+  const arrDateObj = flight.arrivalTime ? new Date(flight.arrivalTime) : new Date();
+  const depTime = !isNaN(depDateObj.getTime())
+    ? depDateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    : '--:--';
+  const arrTime = !isNaN(arrDateObj.getTime())
+    ? arrDateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    : '--:--';
+  const depDate = !isNaN(depDateObj.getTime())
+    ? depDateObj.toLocaleDateString([], {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      })
+    : 'Scheduled';
 
   const isDomestic =
-    flight.origin.country?.toLowerCase() === 'india' && flight.destination.country?.toLowerCase() === 'india';
+    flight.origin?.country?.toLowerCase() === 'india' && flight.destination?.country?.toLowerCase() === 'india';
   const defaultCabinText =
     cabinClass === 'first'
       ? '2 Cabin Bags (18 kg) + Personal Item'

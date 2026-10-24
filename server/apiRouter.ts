@@ -904,7 +904,7 @@ apiRouter.post('/auth/forgot-password/reset', (req: Request, res: Response) => {
 // -------------------------------------------------------------
 // BOOKING CREATION & CONFIRMATION (Step 5 Pay & Verify OTP)
 // -------------------------------------------------------------
-apiRouter.post('/bookings/create', async (req: Request, res: Response) => {
+apiRouter.post(['/bookings/create', '/booking/create'], async (req: Request, res: Response) => {
   const body = req.body || {};
   const {
     flightId,
@@ -1141,7 +1141,7 @@ apiRouter.post('/bookings/create', async (req: Request, res: Response) => {
 });
 
 // GET USER'S BOOKINGS OR LOOKUP BY PNR & EMAIL / USER ID
-apiRouter.get('/bookings/my', (req: Request, res: Response) => {
+apiRouter.get(['/bookings/my', '/booking/my'], (req: Request, res: Response) => {
   const query = req.query || {};
   const { email, pnr, userId } = query as Record<string, string | undefined>;
   const headerUserId = req.headers['x-user-id'] as string | undefined;
@@ -1216,7 +1216,7 @@ function formatVerifiedBookingResponse(booking: Booking) {
 }
 
 // PUBLIC TICKET VERIFICATION (RESOLVED FROM QR CODE URL OR TOKEN/PNR PARAM)
-apiRouter.get('/bookings/verify/:token', (req: Request, res: Response) => {
+apiRouter.get(['/bookings/verify/:token', '/booking/verify/:token'], (req: Request, res: Response) => {
   const tokenParam = (req.params.token || '').trim();
   const rawParamLower = tokenParam.toLowerCase();
   const cleanParam = tokenParam.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
@@ -1251,7 +1251,7 @@ apiRouter.get('/bookings/verify/:token', (req: Request, res: Response) => {
 });
 
 // POST TICKET VERIFICATION (Flexible query or JSON payload with token or pnr)
-apiRouter.post('/bookings/verify', (req: Request, res: Response) => {
+apiRouter.post(['/bookings/verify', '/booking/verify'], (req: Request, res: Response) => {
   const input = ((req.body?.token || req.body?.pnr || req.body?.tokenOrPnr || '') as string).trim();
   if (!input) {
     res.status(400).json({ verified: false, error: 'Please enter a ticket verification token or Booking Reference (PNR).' });
@@ -1291,7 +1291,7 @@ apiRouter.post('/bookings/verify', (req: Request, res: Response) => {
 });
 
 // CANCEL BOOKING
-apiRouter.post('/bookings/:id/cancel', async (req: Request, res: Response) => {
+apiRouter.post(['/bookings/:id/cancel', '/booking/:id/cancel'], async (req: Request, res: Response) => {
   const { id } = req.params;
   const body = req.body || {};
   const { reason } = body;
@@ -1334,7 +1334,7 @@ apiRouter.post('/bookings/:id/cancel', async (req: Request, res: Response) => {
 });
 
 // RETRY RESEND EMAIL CONFIRMATION
-apiRouter.post('/bookings/:id/resend-email', async (req: Request, res: Response) => {
+apiRouter.post(['/bookings/:id/resend-email', '/booking/:id/resend-email'], async (req: Request, res: Response) => {
   const { id } = req.params;
   const booking = bookingsStore.find((b) => b.id === id);
   if (!booking) {
@@ -1376,7 +1376,7 @@ apiRouter.post('/bookings/:id/resend-email', async (req: Request, res: Response)
 // -------------------------------------------------------------
 // PUBLIC EXCHANGE RATES API (Live Synced with Fallback)
 // -------------------------------------------------------------
-apiRouter.get('/exchange-rates', async (_req: Request, res: Response) => {
+apiRouter.get(['/exchange-rates', '/rates'], async (_req: Request, res: Response) => {
   const data = await fetchLiveExchangeRates();
   res.json(data);
 });
@@ -2796,6 +2796,24 @@ apiRouter.get('/dev/recipient-mapping-audit', (_req: Request, res: Response) => 
         status: 'PASSED',
       },
     ],
+  });
+});
+
+// -------------------------------------------------------------
+// API 404 & ERROR HANDLING (Prevents falling through to Vite SPA index.html)
+// -------------------------------------------------------------
+apiRouter.use((req: Request, res: Response) => {
+  res.status(404).json({
+    error: `API route not found: ${req.method} ${req.originalUrl || req.url}`,
+    status: 404,
+  });
+});
+
+apiRouter.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  console.error('[API Server Error]', err);
+  res.status(err.status || 500).json({
+    error: err.message || 'Internal Server Error',
+    status: err.status || 500,
   });
 });
 
